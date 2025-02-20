@@ -8,7 +8,9 @@ import os
 import json
 from sklearn.metrics.pairwise import cosine_similarity
 from io import BytesIO
+from pathlib import Path
 import logging
+from werkzeug.middleware.proxy_fix import ProxyFix
 from functools import lru_cache
 from datetime import datetime
 from typing import Tuple, Optional, Dict, Any, List , Generator
@@ -16,6 +18,9 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 import tempfile
 import time
+
+# Configure paths for Render deployment
+base_path = '/data' if os.path.exists('/data') else os.getcwd()
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -27,8 +32,8 @@ os.makedirs(model_dir, exist_ok=True)
 
 # Configuration
 config = {
-    'UPLOAD_FOLDER': 'uploads',
-    'EMBEDDING_FOLDER': 'embeddings',
+    'UPLOAD_FOLDER': os.path.join(base_path, 'uploads'),
+    'EMBEDDING_FOLDER': os.path.join(base_path, 'embeddings'),
     'SIMILARITY_THRESHOLD': 0.5,
 
     'ALLOWED_EXTENSIONS': {'png', 'jpg', 'jpeg'},
@@ -85,12 +90,13 @@ config.update({
         'MIN_EMBEDDING_SIMILARITY': 0.6,
         'TEMPORAL_WINDOW_SIZE': 5,
         'MIN_SEQUENCE_LENGTH': 3,
-    }
+    },
+    'LOG_FILE': os.path.join(base_path, 'face_recognition.log')
 })
 
 # Setup logging
 logging.basicConfig(
-    filename='face_recognition.log',
+    filename=config['LOG_FILE'],
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
@@ -1000,4 +1006,5 @@ def handle_error(error):
     return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0', port=6969 )
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port)
