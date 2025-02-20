@@ -9,12 +9,12 @@ services:
       - key: PYTHON_VERSION
         value: 3.9.0
       - key: PORT
-        value: 8080  # Changed to standard port 8080
+        value: 8080  # Ensure this matches the port used in gunicorn_config.py
       - key: PYTHONUNBUFFERED
         value: "true"
     healthCheckPath: /health
     ports:
-      - port: 8080  # Match with PORT env var
+      - port: 8080  # Ensure this matches the PORT env var
         protocol: TCP
     disk:
       name: tmp
