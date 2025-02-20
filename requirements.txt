@@ -1,5 +1,8 @@
+wheel>=0.38.0
+setuptools>=42.0.0
+numpy==1.21.6
 Flask==2.0.1
-opencv-python==4.5.3.56
+opencv-python-headless==4.5.3.56
 insightface==0.6.2
 scikit-learn==0.24.2
 onnxruntime==1.8.1
