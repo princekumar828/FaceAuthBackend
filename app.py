@@ -94,6 +94,19 @@ config.update({
     'LOG_FILE': os.path.join(base_path, 'face_recognition.log')
 })
 
+# Update config for free tier optimization
+config.update({
+    'MAX_VIDEO_LENGTH_SECONDS': 30,  # Reduced from 60
+    'MAX_VIDEO_SIZE_MB': 25,         # Reduced from 50
+    'VIDEO_PROCESSING_FPS': 1,       # Reduced from 2
+    'MAX_CACHE_SIZE': 100,           # Reduced from 1000
+    'IMAGE_STANDARDIZATION': {
+        'TARGET_SIZE': (480, 480),   # Reduced from 640x640
+        'MIN_FACE_SIZE': 120,        # Reduced from 160
+        # ...existing code...
+    }
+})
+
 # Setup logging
 logging.basicConfig(
     filename=config['LOG_FILE'],
@@ -995,7 +1008,18 @@ def validate_video(video_file) -> Tuple[bool, Optional[str]]:
     except Exception as e:
         return False, f"Error validating video: {str(e)}"
 
+# Add memory optimization
+@app.before_request
+def before_request():
+    import gc
+    gc.collect()
 
+# Add resource cleanup
+@app.after_request
+def after_request(response):
+    import gc
+    gc.collect()
+    return response
 
 @app.errorhandler(Exception)
 def handle_error(error):

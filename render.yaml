@@ -2,7 +2,7 @@ services:
   - type: web
     name: face-auth-backend
     env: python
-    plan: standard
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app --config gunicorn_config.py
     envVars:
@@ -10,7 +10,3 @@ services:
         value: 3.9.0
       - key: PORT
         value: 10000
-    disk:
-      name: face-auth-data
-      mountPath: /data
-      sizeGB: 10
