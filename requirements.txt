@@ -13,6 +13,7 @@ easydict==1.13
 Flask==3.1.0
 flatbuffers==25.2.10
 fonttools==4.56.0
+gunicorn==21.2.0
 humanfriendly==10.0
 idna==3.10
 imageio==2.37.0
