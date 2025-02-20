@@ -3,10 +3,20 @@ services:
     name: face-auth-backend
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt && pip install -r requirements-base.txt
+    buildCommand: pip install -r requirements-base.txt && pip install -r requirements.txt
     startCommand: gunicorn app:app --config gunicorn_config.py
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.0
       - key: PORT
         value: 10000
+      - key: MALLOC_TRIM_THRESHOLD_
+        value: 131072  # 128KB - More aggressive memory trimming
+      - key: PYTHONUNBUFFERED
+        value: "true"
+      - key: PYTHONMALLOC
+        value: "malloc"  # Use system malloc
+    disk:
+      name: tmp
+      mountPath: /tmp
+      sizeGB: 0.5

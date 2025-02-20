@@ -107,6 +107,25 @@ config.update({
     }
 })
 
+# Update config for memory optimization
+config.update({
+    'MAX_VIDEO_LENGTH_SECONDS': 15,  # Reduced from 30
+    'MAX_VIDEO_SIZE_MB': 10,         # Reduced from 25
+    'VIDEO_PROCESSING_FPS': 1,       # Keep at 1
+    'MAX_CACHE_SIZE': 50,           # Reduced from 100
+    'IMAGE_STANDARDIZATION': {
+        'TARGET_SIZE': (320, 320),   # Reduced from 480x480
+        'MIN_FACE_SIZE': 80,        # Reduced from 120
+    }
+})
+
+# Add memory optimization settings
+config.update({
+    'BATCH_SIZE': 4,               # Process images in smaller batches
+    'MAX_CONCURRENT_PROCESSES': 2,  # Limit concurrent processing
+    'MEMORY_CLEANUP_INTERVAL': 10  # GC cleanup interval
+})
+
 # Setup logging
 logging.basicConfig(
     filename=config['LOG_FILE'],
@@ -898,7 +917,7 @@ def recognize_video():
         start_time = time.time()
         
         # Use ThreadPoolExecutor for parallel frame processing
-        with ThreadPoolExecutor(max_workers=4) as executor:
+        with ThreadPoolExecutor(max_workers=2) as executor:
             futures = []
             
             for frame in extract_frames(video_path, fps=2):  # Process 2 frames per second
@@ -1008,11 +1027,18 @@ def validate_video(video_file) -> Tuple[bool, Optional[str]]:
     except Exception as e:
         return False, f"Error validating video: {str(e)}"
 
+# Define cleanup_memory function
+def cleanup_memory():
+    """
+    Perform memory cleanup tasks.
+    """
+    import gc
+    gc.collect()
+
 # Add memory optimization
 @app.before_request
 def before_request():
-    import gc
-    gc.collect()
+    cleanup_memory()
 
 # Add resource cleanup
 @app.after_request
@@ -1035,4 +1061,4 @@ def health_check():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=False)
