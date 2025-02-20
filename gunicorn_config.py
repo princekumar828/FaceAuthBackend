@@ -1,14 +1,19 @@
 import os
-import multiprocessing
 
-port = os.environ.get('PORT', 10000)
+# Always use the PORT environment variable provided by Render
+port = int(os.environ.get('PORT', 10000))
 bind = f"0.0.0.0:{port}"
+
+# Worker configuration
 workers = 1
 threads = 2
+worker_class = 'sync'  # Change to sync for better compatibility
 timeout = 120
-worker_class = 'gthread'
-max_requests = 25  # Reduced from 50
-max_requests_jitter = 5  # Reduced from 10
-worker_tmp_dir = '/tmp'  # Use temporary directory
-preload_app = False  # Disable preloading
-max_worker_lifetime = 3600  # 1 hour max worker lifetime
+keepalive = 5
+worker_tmp_dir = '/tmp'
+preload_app = False
+
+# Logging
+accesslog = '-'
+errorlog = '-'
+loglevel = 'info'

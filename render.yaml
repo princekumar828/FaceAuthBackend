@@ -9,13 +9,13 @@ services:
       - key: PYTHON_VERSION
         value: 3.9.0
       - key: PORT
-        value: 10000
-      - key: MALLOC_TRIM_THRESHOLD_
-        value: 131072  # 128KB - More aggressive memory trimming
+        value: 8080  # Changed to standard port 8080
       - key: PYTHONUNBUFFERED
         value: "true"
-      - key: PYTHONMALLOC
-        value: "malloc"  # Use system malloc
+    healthCheckPath: /health
+    ports:
+      - port: 8080  # Match with PORT env var
+        protocol: TCP
     disk:
       name: tmp
       mountPath: /tmp
