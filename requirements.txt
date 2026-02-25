@@ -34,7 +34,7 @@ opencv-python-headless==4.11.0.86
 packaging==24.2
 pillow==11.1.0
 prettytable==3.14.0
-protobuf==5.29.3
+protobuf==5.29.6
 psutil==5.9.5  # Add for memory monitoring
 pydantic==2.10.6
 pydantic_core==2.27.2
